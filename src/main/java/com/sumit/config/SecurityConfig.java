@@ -2,6 +2,7 @@ package com.sumit.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,18 +19,15 @@ public class SecurityConfig {
         return http
                 .httpBasic()
                 .and()
+//                .authorizeHttpRequests(c->c.anyRequest().authenticated())
                 .authorizeHttpRequests()
-//                .anyRequest().authenticated() //endpoint level security
-//                .anyRequest().permitAll()
-//                .anyRequest().denyAll()
-//                .anyRequest().hasAnyAuthority("read")
-//                .anyRequest().hasAnyAuthority("read","write")
-//                .anyRequest().hasRole("ADMIN")
-//                .anyRequest().hasAnyRole("ADMIN","MANAGER")
-//                .anyRequest().access("isAuthentication() and hasAuthority('read')")
-                .requestMatchers("/demo").hasAuthority("read")
+//                .requestMatchers("/test1").authenticated()
+//                .requestMatchers("/test2").permitAll()
+//                .requestMatchers("test2").hasAuthority("read")
+//                .requestMatchers(HttpMethod.GET,"/demo/**").hasAuthority("read")
+                .requestMatchers("/test/test1").authenticated()
                 .anyRequest().authenticated()
-                .and()
+                .and().csrf().disable() //dont do in real application here are doing only for post method
                 .build();
     }
 
@@ -39,14 +37,12 @@ public class SecurityConfig {
 
         var user1= User.withUsername("sumit")
                 .password(passwordEncoder().encode("1234"))
-                .authorities("read")
-//                .roles("ADMIN","MANAGER") //equivalent to the authorities named "ROLE_ADMIN"
+                .authorities("read") //granted authorities
                 .build();
 
         var user2= User.withUsername("amit")
                 .password(passwordEncoder().encode("12345"))
                 .authorities("write")
-//                .roles("MANAGER")
                 .build();
 
         uds.createUser(user1);
